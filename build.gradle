@@ -1,0 +1,79 @@
+plugins {
+    id 'java'
+}
+
+group 'reactor'
+version '3.3.5.RELEASE'
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    // Used as a way to get jsr305 annotations.
+    // 3.0.1 is the last version that has the 'annotations' jar needed on the compile classpath
+    findbugsVersion = '3.0.1'
+
+    // Blockhound
+    blockhoundVersion = '1.0.3.RELEASE'
+
+    // Logging
+    slf4jVersion = '1.7.12'
+    logbackVersion = '1.1.2'
+
+    // Testing
+    jUnitPlatformVersion = '5.6.0'
+    assertJVersion = '3.11.1'
+    mockitoVersion = '2.23.0'
+    awaitilityVersion = '3.1.2'
+    throwingFunctionVersion = '1.5.0'
+    javaObjectLayoutVersion = '0.9'
+    testNgVersion = '6.8.5'
+}
+
+dependencies {
+    // https://mvnrepository.com/artifact/javax.annotation/javax.annotation-api
+    implementation group: 'javax.annotation', name: 'javax.annotation-api', version: '1.3.2'
+
+    // JSR-305 annotations
+    compileOnly "com.google.code.findbugs:jsr305:${findbugsVersion}"
+    testCompileOnly "com.google.code.findbugs:jsr305:${findbugsVersion}"
+
+    compile group: 'org.jboss', name: 'jdk-misc', version: '3.Final'
+
+    // https://mvnrepository.com/artifact/org.jetbrains/annotations
+    implementation group: 'org.jetbrains', name: 'annotations', version: '15.0'
+
+    // Reactive Streams
+    implementation "org.reactivestreams:reactive-streams:${reactiveStreamsVersion}"
+    testImplementation("org.reactivestreams:reactive-streams-tck:${reactiveStreamsVersion}") {
+        // without this exclusion, testing brings an old version of junit which *embeds* an old version of hamcrest
+        // which gets picked up first and that we don't want. TCK runs fine w/o (old) junit 4.
+        exclude group: 'junit', module: 'junit'
+    }
+
+    // Optional Logging Operator
+    compileOnly "org.slf4j:slf4j-api:$slf4jVersion"
+    testCompileOnly "org.slf4j:slf4j-api:$slf4jVersion"
+
+    // Optional Metrics
+    compileOnly "io.micrometer:micrometer-core:$micrometerVersion"
+
+    // Optional BlockHound support
+    compileOnly "io.projectreactor.tools:blockhound:$blockhoundVersion"
+
+    testImplementation platform("org.junit:junit-bom:${jUnitPlatformVersion}")
+    testImplementation "org.junit.jupiter:junit-jupiter-api"
+    testImplementation "org.junit.platform:junit-platform-launcher"
+    testImplementation "org.junit.jupiter:junit-jupiter-params"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+
+    testImplementation "ch.qos.logback:logback-classic:$logbackVersion"
+
+    testImplementation "org.assertj:assertj-core:$assertJVersion"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
+    testImplementation "org.openjdk.jol:jol-core:$javaObjectLayoutVersion"
+    testImplementation "org.awaitility:awaitility:$awaitilityVersion"
+    testImplementation "com.pivovarit:throwing-function:$throwingFunctionVersion"
+    testImplementation "com.tngtech.archunit:archunit:0.12.0"
+}
