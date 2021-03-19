@@ -15,14 +15,13 @@
  */
 package reactor.core.scheduler;
 
-import java.util.concurrent.Executor;
+import reactor.core.Disposable;
+import reactor.core.Exceptions;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import reactor.core.Disposable;
-import reactor.core.Exceptions;
 
 /**
  * Provides an abstract asynchronous boundary to operators.

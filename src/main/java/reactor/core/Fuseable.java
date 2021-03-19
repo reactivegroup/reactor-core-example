@@ -15,14 +15,13 @@
  */
 package reactor.core;
 
+import org.reactivestreams.Subscription;
+import reactor.util.annotation.Nullable;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Queue;
 import java.util.concurrent.Callable;
-
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
-import reactor.util.annotation.Nullable;
 
 /**
  * A micro API for stream fusion, in particular marks producers that support a {@link QueueSubscription}.
@@ -86,7 +85,7 @@ public interface Fuseable {
 	 * @param <T> the value type emitted
 	 */
 	interface QueueSubscription<T> extends Queue<T>, Subscription {
-		
+
 		String NOT_SUPPORTED_MESSAGE = "Although QueueSubscription extends Queue it is purely internal" +
 				" and only guarantees support for poll/clear/size/isEmpty." +
 				" Instances shouldn't be used/exposed as Queue outside of Reactor operators.";
@@ -108,7 +107,7 @@ public interface Fuseable {
 		 */
 		int requestFusion(int requestedMode);
 
-		
+
 		@Override
 		@Nullable
 		default T peek() {

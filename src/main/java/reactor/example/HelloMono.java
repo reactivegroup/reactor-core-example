@@ -1,12 +1,12 @@
 package reactor.example;
 
-import reactor.core.publisher.Mono;
+import reactor.core.publisher.Flux;
 
 public class HelloMono {
 
     public static void main(String[] args) {
-        Mono
-                .just("hello")
+        Flux.just("tom", "jack", "allen")
+                .map(s -> s.concat("@qq.com"))
                 .subscribe(System.out::println);
     }
 }
