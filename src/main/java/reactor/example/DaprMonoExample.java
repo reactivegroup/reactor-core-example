@@ -5,6 +5,7 @@ import reactor.util.context.Context;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Learning {@code dapr-java-sdk} reactor process
@@ -17,7 +18,8 @@ public class DaprMonoExample {
         Mono.subscriberContext()
                 .flatMap(context -> invokeApi(context))
                 .flatMap(s -> Mono.just(s.toUpperCase()))
-                .subscribe(System.out::println);
+                .contextWrite(context -> context.put("Test", "TestValue"))
+                .subscribe(s -> System.out.println(Thread.currentThread().getName() + s));
     }
 
     private static Mono<String> invokeApi(Context context) {
@@ -27,11 +29,19 @@ public class DaprMonoExample {
     }
 
     private static CompletableFuture<String> doInvokeApi(Context context) {
-        context.put("Test", "TestValue");
-
         CompletableFuture<String> future = new CompletableFuture<>();
-        future.whenCompleteAsync((s, throwable) -> context.readOnly().getOrDefault("Test", "TestDefault"),
-                Executors.newSingleThreadExecutor());
+        Executors.newScheduledThreadPool(1,
+                r -> {
+                    Thread thread = new Thread(r);
+                    thread.setName("schedule");
+                    return thread;
+                })
+                .schedule(() -> {
+                            future.complete(context.getOrDefault("Test", "Default"));
+                        },
+                        2,
+                        TimeUnit.SECONDS);
+        future.whenComplete((s, throwable) -> System.out.println(Thread.currentThread().getName() + s));
         return future;
     }
 }

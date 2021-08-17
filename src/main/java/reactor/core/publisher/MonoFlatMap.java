@@ -54,6 +54,7 @@ final class MonoFlatMap<T, R> extends InternalMonoOperator<T, R> implements Fuse
 			return null;
 		}
 
+		// TODO 把actual和this做了熔合
 		FlatMapMain<T, R> manager = new FlatMapMain<>(actual, mapper);
 		actual.onSubscribe(manager);
 
@@ -70,6 +71,7 @@ final class MonoFlatMap<T, R> extends InternalMonoOperator<T, R> implements Fuse
 
 		final Function<? super T, ? extends Mono<? extends R>> mapper;
 
+		// TODO 通过second保存上下级关系？
 		final FlatMapInner<R> second;
 
 		boolean done;
